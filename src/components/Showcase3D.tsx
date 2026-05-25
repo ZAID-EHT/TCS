@@ -15,33 +15,128 @@ class ModelErrorBoundary extends Component<{children: ReactNode}, {hasError: boo
   }
   render() {
     if (this.state.hasError) {
-      return (
-        <mesh>
-          <boxGeometry args={[1.5, 1, 3]} />
-          <meshStandardMaterial color="#bc000c" />
-        </mesh>
-      );
+      return <ProceduralCar />;
     }
     return this.props.children;
   }
 }
 
-function CarModel() {
-  const [modelUrl, setModelUrl] = React.useState("https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/models/gltf/ferrari.glb");
+function ProceduralCar() {
   const groupRef = useRef<THREE.Group>(null);
+  
+  // Exquisite custom procedural sports car built with Three.js primitives
+  // This guarantees there is always a gorgeous, interactive, high-performance car visible
+  return (
+    <group ref={groupRef} position={[0, -0.3, 0]}>
+      {/* Main lower aerodynamic chassis panel */}
+      <mesh castShadow receiveShadow position={[0, 0.1, 0]}>
+        <boxGeometry args={[1.7, 0.3, 3.7]} />
+        <meshStandardMaterial color="#0c0c0c" roughness={0.12} metalness={0.92} />
+      </mesh>
+      
+      {/* Sleek curves - front hood and bumper */}
+      <mesh castShadow position={[0, 0.22, 1.3]}>
+        <boxGeometry args={[1.6, 0.22, 1.1]} />
+        <meshStandardMaterial color="#bc000c" roughness={0.1} metalness={0.95} />
+      </mesh>
 
-  React.useEffect(() => {
-    // Quietly detect if a local nissan_gtr.glb is available in the public folder
-    fetch("/nissan_gtr.glb", { method: "HEAD" })
-      .then((res) => {
-        if (res.status === 200 || res.ok) {
-          setModelUrl("/nissan_gtr.glb");
-        }
-      })
-      .catch(() => {
-        // Fallback already set to high-quality CDN sports car
-      });
-  }, []);
+      {/* Rear trunk and bodywork */}
+      <mesh castShadow position={[0, 0.28, -1.2]}>
+        <boxGeometry args={[1.62, 0.35, 1.3]} />
+        <meshStandardMaterial color="#bc000c" roughness={0.1} metalness={0.95} />
+      </mesh>
+
+      {/* Glossy aerodynamic cabin container */}
+      <mesh castShadow position={[0, 0.52, -0.1]}>
+        <boxGeometry args={[1.34, 0.42, 1.8]} />
+        <meshStandardMaterial color="#1a1a2b" roughness={0.02} metalness={0.98} transparent opacity={0.88} />
+      </mesh>
+
+      {/* Front glowing blue windshield */}
+      <mesh position={[0, 0.55, 0.8]} rotation={[-Math.PI / 6, 0, 0]}>
+        <boxGeometry args={[1.22, 0.45, 0.05]} />
+        <meshStandardMaterial color="#00f3ff" roughness={0.01} metalness={0.9} transparent opacity={0.7} emissive="#00354d" emissiveIntensity={1.5} />
+      </mesh>
+
+      {/* Futuristic sports car wheels */}
+      {/* Front Left */}
+      <mesh castShadow position={[-0.9, 0.0, 1.15]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.38, 0.38, 0.28, 24]} />
+        <meshStandardMaterial color="#111111" roughness={0.9} />
+      </mesh>
+      {/* Front Right */}
+      <mesh castShadow position={[0.9, 0.0, 1.15]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.38, 0.38, 0.28, 24]} />
+        <meshStandardMaterial color="#111111" roughness={0.9} />
+      </mesh>
+      {/* Rear Left */}
+      <mesh castShadow position={[-0.9, 0.0, -1.15]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.4, 0.4, 0.32, 24]} />
+        <meshStandardMaterial color="#111111" roughness={0.9} />
+      </mesh>
+      {/* Rear Right */}
+      <mesh castShadow position={[0.9, 0.0, -1.15]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.4, 0.4, 0.32, 24]} />
+        <meshStandardMaterial color="#111111" roughness={0.9} />
+      </mesh>
+
+      {/* Highly polished titanium hub caps */}
+      <mesh position={[-1.01, 0.0, 1.15]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.22, 0.22, 0.06, 12]} />
+        <meshStandardMaterial color="#f0f0f0" metalness={1.0} roughness={0.05} />
+      </mesh>
+      <mesh position={[1.01, 0.0, 1.15]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.22, 0.22, 0.06, 12]} />
+        <meshStandardMaterial color="#f0f0f0" metalness={1.0} roughness={0.05} />
+      </mesh>
+      <mesh position={[-1.01, 0.0, -1.15]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.24, 0.24, 0.06, 12]} />
+        <meshStandardMaterial color="#f0f0f0" metalness={1.0} roughness={0.05} />
+      </mesh>
+      <mesh position={[1.01, 0.0, -1.15]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.24, 0.24, 0.06, 12]} />
+        <meshStandardMaterial color="#f0f0f0" metalness={1.0} roughness={0.05} />
+      </mesh>
+
+      {/* Cyber carbon spoiler wing */}
+      <mesh castShadow position={[0, 0.65, -1.5]} rotation={[0.04, 0, 0]}>
+        <boxGeometry args={[1.5, 0.04, 0.45]} />
+        <meshStandardMaterial color="#0b0b0b" roughness={0.08} metalness={0.95} />
+      </mesh>
+      <mesh castShadow position={[-0.6, 0.45, -1.48]}>
+        <boxGeometry args={[0.04, 0.32, 0.12]} />
+        <meshStandardMaterial color="#0c0c0c" roughness={0.2} />
+      </mesh>
+      <mesh castShadow position={[0.6, 0.45, -1.48]}>
+        <boxGeometry args={[0.04, 0.32, 0.12]} />
+        <meshStandardMaterial color="#0c0c0c" roughness={0.2} />
+      </mesh>
+
+      {/* Laser LED headlights */}
+      <mesh position={[-0.6, 0.28, 1.83]} rotation={[0.0, 0, 0]}>
+        <boxGeometry args={[0.24, 0.06, 0.08]} />
+        <meshStandardMaterial color="#00f3ff" emissive="#00ffff" emissiveIntensity={5} />
+      </mesh>
+      <mesh position={[0.6, 0.28, 1.83]} rotation={[0.0, 0, 0]}>
+        <boxGeometry args={[0.24, 0.06, 0.08]} />
+        <meshStandardMaterial color="#00f3ff" emissive="#00ffff" emissiveIntensity={5} />
+      </mesh>
+
+      {/* Horizontal ruby-red light strip */}
+      <mesh position={[0, 0.35, -1.83]}>
+        <boxGeometry args={[1.4, 0.04, 0.06]} />
+        <meshStandardMaterial color="#ff0022" emissive="#ff0022" emissiveIntensity={4} />
+      </mesh>
+    </group>
+  );
+}
+
+interface CarModelProps {
+  modelUrl: string;
+}
+
+function CarModel({ modelUrl }: CarModelProps) {
+  const groupRef = useRef<THREE.Group>(null);
 
   // Use reliable Draco-loader fallback for all model formats
   const { scene } = useGLTF(modelUrl, "https://www.gstatic.com/draco/versioned/decoders/1.5.5/");
@@ -135,7 +230,7 @@ function CarModel() {
             mat.roughness = 0.02;
             mat.color.set("#151525");
           }
-
+          
           // Tires & Matt Rubber
           if (matName.includes("tire") || matName.includes("rubber") || matName.includes("wheel_rubber")) {
             mat.roughness = 0.85;
@@ -151,6 +246,7 @@ function CarModel() {
   useFrame(() => {
     if (!groupRef.current) return;
 
+    const circleProgress = (window as any).showcaseCircleProgress || 0;
     const progress = (window as any).showcaseScrollProgress || 0;
 
     let targetX = 0;
@@ -167,32 +263,34 @@ function CarModel() {
     
     let targetScale = isMobile ? 0.95 : 1.05; 
 
-    if (progress < 0.25) {
-      // Phase 1: Reveal & Zoom (Progress mapped from 0.0 to 0.25)
-      const t = progress / 0.25;
-      targetScale = THREE.MathUtils.lerp(isMobile ? 0.75 : 0.88, isMobile ? 1.0 : 1.25, t);
-      targetRotY = THREE.MathUtils.lerp(-Math.PI / 4, -Math.PI / 2, t);
-    } else if (progress < 0.58) {
-      // Phase 2: Slide Right, Rotate to show side bodywork (Progress mapped from 0.25 to 0.58)
-      const t = (progress - 0.25) / 0.33;
-      targetScale = isMobile ? 1.0 : 1.25;
-      targetX = THREE.MathUtils.lerp(0, nudgeDistance, t);
-      targetRotY = THREE.MathUtils.lerp(-Math.PI / 2, Math.PI / 9, t);
-      targetRotX = THREE.MathUtils.lerp(0, 0.05, t); 
-    } else if (progress < 0.84) {
-      // Phase 3: Slide Left, Rotate around to highlight tyre depth and rear details (Progress mapped from 0.58 to 0.84)
-      const t = (progress - 0.58) / 0.26;
-      targetScale = isMobile ? 1.0 : 1.25;
-      targetX = THREE.MathUtils.lerp(nudgeDistance, -nudgeDistance, t);
-      targetRotY = THREE.MathUtils.lerp(Math.PI / 9, -Math.PI / 1.5, t);
-      targetRotX = THREE.MathUtils.lerp(0.05, -0.05, t);
+    if (circleProgress < 1.0) {
+      // Phase 1: Interactive Smooth Entry / Reveal (based on smooth entrance)
+      targetScale = THREE.MathUtils.lerp(isMobile ? 0.65 : 0.75, isMobile ? 1.05 : 1.25, circleProgress);
+      targetRotY = THREE.MathUtils.lerp(-Math.PI / 3, -Math.PI / 2, circleProgress);
     } else {
-      // Phase 4: Spin back to central finish (Progress mapped from 0.84 to 1.0)
-      const t = (progress - 0.84) / 0.16;
-      targetScale = THREE.MathUtils.lerp(isMobile ? 1.0 : 1.25, isMobile ? 0.85 : 1.08, t);
-      targetX = THREE.MathUtils.lerp(-nudgeDistance, 0, t);
-      targetRotY = THREE.MathUtils.lerp(-Math.PI / 1.5, -Math.PI / 4 + Math.PI * 2, t);
-      targetRotX = THREE.MathUtils.lerp(-0.05, 0, t);
+      // Phases 2, 3, 4 based on sticky scroll progress (from clampedProgress = 0.0 to 1.0)
+      if (progress < 0.35) {
+        // Phase 2: Slide Right, Rotate to show side bodywork (Progress mapped from 0.0 to 0.35)
+        const t = progress / 0.35;
+        targetScale = isMobile ? 1.05 : 1.25;
+        targetX = THREE.MathUtils.lerp(0, nudgeDistance, t);
+        targetRotY = THREE.MathUtils.lerp(-Math.PI / 2, Math.PI / 9, t);
+        targetRotX = THREE.MathUtils.lerp(0, 0.05, t); 
+      } else if (progress < 0.75) {
+        // Phase 3: Slide Left, Rotate around to highlight tyre depth and rear details (Progress mapped from 0.35 to 0.75)
+        const t = (progress - 0.35) / 0.40;
+        targetScale = isMobile ? 1.05 : 1.25;
+        targetX = THREE.MathUtils.lerp(nudgeDistance, -nudgeDistance, t);
+        targetRotY = THREE.MathUtils.lerp(Math.PI / 9, -Math.PI / 1.5, t);
+        targetRotX = THREE.MathUtils.lerp(0.05, -0.05, t);
+      } else {
+        // Phase 4: Spin back to central finish (Progress mapped from 0.75 to 1.0)
+        const t = (progress - 0.75) / 0.25;
+        targetScale = THREE.MathUtils.lerp(isMobile ? 1.05 : 1.25, isMobile ? 0.85 : 1.08, t);
+        targetX = THREE.MathUtils.lerp(-nudgeDistance, 0, t);
+        targetRotY = THREE.MathUtils.lerp(-Math.PI / 1.5, -Math.PI / 4 + Math.PI * 2, t);
+        targetRotX = THREE.MathUtils.lerp(-0.05, 0, t);
+      }
     }
 
     // Buttery inertia factor (0.075 achieves a spectacular heavy mechanical/fluid weight)
@@ -225,6 +323,23 @@ export function Showcase3D() {
   const tooltip2Ref = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
 
+  const [modelPath, setModelPath] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Detect if a local nissan_gtr.glb is available in the public folder
+    fetch("/nissan_gtr.glb", { method: "HEAD" })
+      .then((res) => {
+        if (res.status === 200 || res.ok) {
+          setModelPath("/nissan_gtr.glb");
+        } else {
+          setModelPath("https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/models/gltf/ferrari.glb");
+        }
+      })
+      .catch(() => {
+        setModelPath("https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/models/gltf/ferrari.glb");
+      });
+  }, []);
+
   // Unified scroll handler to track scroll container position with native perfection
   useEffect(() => {
     const handleScroll = () => {
@@ -239,11 +354,27 @@ export function Showcase3D() {
 
       (window as any).showcaseScrollProgress = clampedProgress;
 
-      // Direct high-performance DOM manipulation to prevent heavy React re-renders
+      // Top of the container relative to the viewport
+      const topOfContainer = rect.top;
+      
+      // Let's start the circle animation smoothly when the section first scrolls into the viewport
+      const startAnimY = window.innerHeight * 0.95; // start opening near the bottom fold
+      const endAnimY = -window.innerHeight * 0.15; // fully open soon after top reaches the status header
+      
+      let circleProgress = 0;
+      if (topOfContainer <= startAnimY) {
+        circleProgress = (startAnimY - topOfContainer) / (startAnimY - endAnimY);
+        circleProgress = Math.max(0, Math.min(1, circleProgress));
+      }
+
+      (window as any).showcaseCircleProgress = circleProgress;
+
+      // Direct high-performance DOM manipulation with Webkit prefix and Hardware Layer Promotion to prevent Safari/Chrome bugs
       if (maskRef.current) {
-        maskRef.current.style.clipPath = clampedProgress < 0.25 
-          ? `circle(${(clampedProgress / 0.25) * 150}% at 50% 50%)` 
-          : "circle(150% at 50% 50%)";
+        const radius = circleProgress * 150;
+        const clipVal = `circle(${radius}% at 50% 50%)`;
+        maskRef.current.style.clipPath = clipVal;
+        (maskRef.current.style as any).webkitClipPath = clipVal;
       }
 
       if (headerRef.current) {
@@ -340,7 +471,15 @@ export function Showcase3D() {
         <div 
           ref={maskRef}
           className="absolute inset-0 bg-surface-lowest z-10 overflow-hidden select-none" 
-          style={{ clipPath: "circle(0% at 50% 50%)" }}
+          style={{ 
+            clipPath: "circle(0% at 50% 50%)",
+            WebkitClipPath: "circle(0% at 50% 50%)",
+            transform: "translate3d(0, 0, 0)",
+            WebkitTransform: "translate3d(0, 0, 0)",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            willChange: "clip-path, -webkit-clip-path"
+          }}
         >
           {/* 3D Canvas with High-Performance Power Preference and Pixel Ratio Caps */}
           <Canvas 
@@ -374,11 +513,13 @@ export function Showcase3D() {
               <Environment preset="sunset" />
             </ModelErrorBoundary>
 
-            <ModelErrorBoundary>
-              <React.Suspense fallback={null}>
-                <CarModel />
-              </React.Suspense>
-            </ModelErrorBoundary>
+            {modelPath && (
+              <ModelErrorBoundary>
+                <React.Suspense fallback={null}>
+                  <CarModel modelUrl={modelPath} />
+                </React.Suspense>
+              </ModelErrorBoundary>
+            )}
             
             <ContactShadows resolution={1024} scale={15} blur={2.5} opacity={0.65} far={5} position={[0, -0.85, 0]} />
           </Canvas>
