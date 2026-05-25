@@ -219,7 +219,10 @@ function CarModel() {
 
 export function Showcase3D() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [progress, setProgress] = useState(0);
+  const maskRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLHeadingElement>(null);
+  const tooltip1Ref = useRef<HTMLDivElement>(null);
+  const tooltip2Ref = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
 
   // Unified scroll handler to track scroll container position with native perfection
@@ -235,7 +238,64 @@ export function Showcase3D() {
       const clampedProgress = Math.max(0, Math.min(1, rawProgress));
 
       (window as any).showcaseScrollProgress = clampedProgress;
-      setProgress(clampedProgress);
+
+      // Direct high-performance DOM manipulation to prevent heavy React re-renders
+      if (maskRef.current) {
+        maskRef.current.style.clipPath = clampedProgress < 0.25 
+          ? `circle(${(clampedProgress / 0.25) * 150}% at 50% 50%)` 
+          : "circle(150% at 50% 50%)";
+      }
+
+      if (headerRef.current) {
+        const headerOpacity = Math.max(0, 1 - clampedProgress / 0.18);
+        const headerY = -(clampedProgress / 0.18) * 60;
+        headerRef.current.style.opacity = `${headerOpacity}`;
+        headerRef.current.style.transform = `translateY(${headerY}px)`;
+      }
+
+      if (tooltip1Ref.current) {
+        let tooltip1Opacity = 0;
+        let tooltip1Transform = "translateX(-30px) scale(0.9)";
+        if (clampedProgress > 0.25 && clampedProgress < 0.60) {
+          if (clampedProgress < 0.38) {
+            const t = (clampedProgress - 0.25) / 0.13;
+            tooltip1Opacity = t;
+            tooltip1Transform = `translateX(${-30 + 30 * t}px) scale(${0.9 + 0.1 * t})`;
+          } else if (clampedProgress > 0.48) {
+            const t = Math.max(0, 1 - (clampedProgress - 0.48) / 0.12);
+            tooltip1Opacity = t;
+            tooltip1Transform = `translateX(${-20 * (1 - t)}px) scale(${0.95 + 0.05 * t})`;
+          } else {
+            tooltip1Opacity = 1;
+            tooltip1Transform = "translateX(0px) scale(1)";
+          }
+        }
+        tooltip1Ref.current.style.opacity = `${tooltip1Opacity}`;
+        tooltip1Ref.current.style.transform = tooltip1Transform;
+        tooltip1Ref.current.style.pointerEvents = tooltip1Opacity > 0.5 ? "auto" : "none";
+      }
+
+      if (tooltip2Ref.current) {
+        let tooltip2Opacity = 0;
+        let tooltip2Transform = "translateX(30px) scale(0.9)";
+        if (clampedProgress > 0.60 && clampedProgress < 0.90) {
+          if (clampedProgress < 0.73) {
+            const t = (clampedProgress - 0.60) / 0.13;
+            tooltip2Opacity = t;
+            tooltip2Transform = `translateX(${30 - 30 * t}px) scale(${0.9 + 0.1 * t})`;
+          } else if (clampedProgress > 0.80) {
+            const t = Math.max(0, 1 - (clampedProgress - 0.80) / 0.10);
+            tooltip2Opacity = t;
+            tooltip2Transform = `translateX(${20 * (1 - t)}px) scale(${0.95 + 0.05 * t})`;
+          } else {
+            tooltip2Opacity = 1;
+            tooltip2Transform = "translateX(0px) scale(1)";
+          }
+        }
+        tooltip2Ref.current.style.opacity = `${tooltip2Opacity}`;
+        tooltip2Ref.current.style.transform = tooltip2Transform;
+        tooltip2Ref.current.style.pointerEvents = tooltip2Opacity > 0.5 ? "auto" : "none";
+      }
     };
 
     // Fast event-bound synchronization for instant responsiveness
@@ -263,51 +323,6 @@ export function Showcase3D() {
     };
   }, [lenis]);
 
-  // Compute live clip mask reveal radius natively for instant screen layouts
-  const maskClipPath = progress < 0.25 
-    ? `circle(${(progress / 0.25) * 150}% at 50% 50%)` 
-    : "circle(150% at 50% 50%)";
-
-  // Header fade-slide overlays
-  const headerOpacity = Math.max(0, 1 - progress / 0.18);
-  const headerY = -(progress / 0.18) * 60;
-
-  // Tooltip 1 (Left Card - Surface Detail)
-  let tooltip1Opacity = 0;
-  let tooltip1Transform = "translateX(-30px) scale(0.9)";
-  if (progress > 0.25 && progress < 0.60) {
-    if (progress < 0.38) {
-      const t = (progress - 0.25) / 0.13;
-      tooltip1Opacity = t;
-      tooltip1Transform = `translateX(${-30 + 30 * t}px) scale(${0.9 + 0.1 * t})`;
-    } else if (progress > 0.48) {
-      const t = Math.max(0, 1 - (progress - 0.48) / 0.12);
-      tooltip1Opacity = t;
-      tooltip1Transform = `translateX(${-20 * (1 - t)}px) scale(${0.95 + 0.05 * t})`;
-    } else {
-      tooltip1Opacity = 1;
-      tooltip1Transform = "translateX(0px) scale(1)";
-    }
-  }
-
-  // Tooltip 2 (Right Card - Texture Detail)
-  let tooltip2Opacity = 0;
-  let tooltip2Transform = "translateX(30px) scale(0.9)";
-  if (progress > 0.60 && progress < 0.90) {
-    if (progress < 0.73) {
-      const t = (progress - 0.60) / 0.13;
-      tooltip2Opacity = t;
-      tooltip2Transform = `translateX(${30 - 30 * t}px) scale(${0.9 + 0.1 * t})`;
-    } else if (progress > 0.80) {
-      const t = Math.max(0, 1 - (progress - 0.80) / 0.10);
-      tooltip2Opacity = t;
-      tooltip2Transform = `translateX(${20 * (1 - t)}px) scale(${0.95 + 0.05 * t})`;
-    } else {
-      tooltip2Opacity = 1;
-      tooltip2Transform = "translateX(0px) scale(1)";
-    }
-  }
-
   return (
     <div ref={containerRef} className="relative z-20 h-[300vh] w-full bg-primary">
       {/* 
@@ -323,11 +338,22 @@ export function Showcase3D() {
 
         {/* Layer 1: Circular Reveal Container */}
         <div 
+          ref={maskRef}
           className="absolute inset-0 bg-surface-lowest z-10 overflow-hidden select-none" 
-          style={{ clipPath: maskClipPath, transition: "clip-path 0.05s ease-out" }}
+          style={{ clipPath: "circle(0% at 50% 50%)" }}
         >
-          {/* 3D Canvas */}
-          <Canvas camera={{ position: [0, 1.2, 5.8], fov: 42 }} gl={{ antialias: true }} dpr={[1, 2]} shadows>
+          {/* 3D Canvas with High-Performance Power Preference and Pixel Ratio Caps */}
+          <Canvas 
+            camera={{ position: [0, 1.2, 5.8], fov: 42 }} 
+            gl={{ 
+              antialias: true, 
+              powerPreference: "high-performance",
+              precision: "highp"
+            }} 
+            dpr={[1, 2]} 
+            shadows
+            style={{ willChange: "transform" }}
+          >
             {/* Cinematic warm light highlights */}
             <ambientLight intensity={0.7} color="#fffcf5" />
             <directionalLight 
@@ -361,11 +387,11 @@ export function Showcase3D() {
           <div className="absolute inset-0 pointer-events-none z-20 flex flex-col justify-between py-16 md:py-24 px-gutter md:px-24">
              <div className="flex justify-center w-full">
                 <h2 
+                  ref={headerRef}
                   className="font-headline text-4xl md:text-7xl uppercase text-primary tracking-tight text-center select-none"
                   style={{
-                    opacity: headerOpacity,
-                    transform: `translateY(${headerY}px)`,
-                    transition: "opacity 0.05s ease-out, transform 0.05s ease-out"
+                    opacity: 1,
+                    transform: "translateY(0px)"
                   }}
                 >
                   The GTR Experience
@@ -376,11 +402,13 @@ export function Showcase3D() {
              <div className="w-full h-full relative font-mono uppercase tracking-widest text-xs flex items-center justify-between pointer-events-none">
                 {/* Left Card */}
                 <div 
+                  ref={tooltip1Ref}
                   className="bg-primary text-on-primary p-6 border-l-4 border-secondary max-w-sm ml-4 md:ml-12 shadow-2xl rounded-sm pointer-events-auto transform transition-all duration-150"
                   style={{
-                    opacity: tooltip1Opacity,
-                    transform: tooltip1Transform,
-                    pointerEvents: tooltip1Opacity > 0.5 ? "auto" : "none"
+                    opacity: 0,
+                    transform: "translateX(-30px) scale(0.9)",
+                    willChange: "transform, opacity",
+                    pointerEvents: "none"
                   }}
                 >
                   <div className="flex items-center gap-2 mb-2 text-secondary font-bold tracking-wider text-[10px]">
@@ -395,11 +423,13 @@ export function Showcase3D() {
                 
                 {/* Right Card */}
                 <div 
+                  ref={tooltip2Ref}
                   className="bg-primary text-on-primary p-6 border-r-4 border-secondary max-w-sm mr-4 md:mr-12 text-right shadow-2xl rounded-sm pointer-events-auto transform transition-all duration-150"
                   style={{
-                    opacity: tooltip2Opacity,
-                    transform: tooltip2Transform,
-                    pointerEvents: tooltip2Opacity > 0.5 ? "auto" : "none"
+                    opacity: 0,
+                    transform: "translateX(30px) scale(0.9)",
+                    willChange: "transform, opacity",
+                    pointerEvents: "none"
                   }}
                 >
                   <div className="flex items-center justify-end gap-2 mb-2 text-secondary font-bold tracking-wider text-[10px]">
